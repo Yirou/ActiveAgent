@@ -50,4 +50,9 @@ public class Cellule {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "Cellule{" + "x=" + x + ", y=" + y + ", content=" + content + '}';
+    }
+
 }
