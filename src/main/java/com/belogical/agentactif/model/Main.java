@@ -5,7 +5,7 @@
  */
 package com.belogical.agentactif.model;
 
-import com.belogical.agentactif.model.views.EnrinonnementView;
+import com.belogical.agentactif.model.views.EnvironnementView;
 
 /**
  *
@@ -13,7 +13,7 @@ import com.belogical.agentactif.model.views.EnrinonnementView;
  */
 public class Main {
 
-     Environnement environnement;
+    Environnement environnement;
 
     public Main() {
         environnement = Environnement.getInstance();
@@ -24,8 +24,8 @@ public class Main {
 
     public static void main(String argv[]) {
         new Main();
-        EnrinonnementView view =new EnrinonnementView();
-        view.setEnvironnement(Environnement.getInstance());
-        
+        EnvironnementView view = EnvironnementView.getInstance();
+        view.initialize();
+
     }
 }

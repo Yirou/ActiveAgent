@@ -3,21 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.belogical.agentactif.model;
+package com.belogical.agentactif.utils;
 
-import java.util.Observable;
+import java.util.Random;
 
 /**
  *
  * @author yirou
  */
-public abstract class Content extends Observable {
+public class Utils {
 
-    protected String name;
-    
-
-    public Content(String name) {
-        this.name = name;
+    public static int random(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
     }
-
 }

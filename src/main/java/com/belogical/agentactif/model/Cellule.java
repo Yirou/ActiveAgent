@@ -13,6 +13,7 @@ public class Cellule {
 
     private int x;
     private int y;
+    private double pheromone=0.0;
     private Content content;
 
     public Cellule(int x, int y) {
@@ -28,6 +29,14 @@ public class Cellule {
 
     public int getX() {
         return x;
+    }
+
+    public void setPheromone(double pheromone) {
+        this.pheromone = pheromone;
+    }
+
+    public double getPheromone() {
+        return pheromone;
     }
 
     public void setX(int x) {

@@ -6,80 +6,71 @@
 package com.belogical.agentactif.model.views;
 
 import com.belogical.agentactif.model.Cellule;
-import com.belogical.agentactif.model.Content;
 import com.belogical.agentactif.model.Environnement;
-import com.belogical.agentactif.model.Objet;
-import com.belogical.agentactif.model.agent.Agent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
 /**
  *
  * @author yirou
  */
-public class EnrinonnementView extends javax.swing.JFrame {
+public class EnvironnementView extends javax.swing.JFrame {
 
-    Environnement environnement = Environnement.getInstance();
-    List<JPanel> panels = new ArrayList<>();
-    Dimension dimension = new Dimension(50, 50);
+    private Environnement environnement = Environnement.getInstance();
+    private List<MyButton> buttons = new ArrayList<>();
+    private final Dimension dimension = new Dimension(50, 50);
+    public static final String urlAgentExplorateur="src/main/resources/img/androidExplorateur.png";
+    public static final String urlAgentEscavateur="src/main/resources/img/agentEscavateur.png";
+    public static final String urlAgentTransporteur="src/main/resources/img/androidTranspoteur.png";
+    public static final String urlMinerai="src/main/resources/img/diamant.png";
+    public static final String urlRocher="src/main/resources/img/rocher.jpg";
+    private static final EnvironnementView instance = new EnvironnementView();
 
     /**
      * Creates new form EnrinonnementView
      */
-    public EnrinonnementView() {
+    private EnvironnementView() {
         initComponents();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panelBackground.setLayout(new GridLayout(environnement.getNbLine(), environnement.getNbColumn(), 5, 5));
-        initialize();
         this.setVisible(true);
     }
 
-    private void initialize() {
-        JPanel panel;
+    public static EnvironnementView getInstance() {
+        return instance;
+    }
+
+    public List<MyButton> getButtons() {
+        return buttons;
+    }
+
+    public void setButtons(List<MyButton> buttons) {
+        this.buttons = buttons;
+    }
+
+    public void initialize()  {
+        MyButton button;
         for (int i = 0; i < environnement.getNbLine(); i++) {
             for (int j = 0; j < environnement.getNbLine(); j++) {
-                panel = new JPanel();
-                panel.setPreferredSize(dimension);
-                panel.setBorder(new EtchedBorder());
-                this.panelBackground.add(panel);
                 Cellule cellule = environnement.getCellules()[i][j];
-                displayCellulePanel(cellule, panel);
+                button = new MyButton(cellule);
+                button.setPreferredSize(dimension);
+                button.setBorder(new EtchedBorder());
+                this.panelBackground.add(button);
+                buttons.add(button);
+                button.displayCellule();
             }
         }
         this.validate();
     }
 
-    private void displayCellulePanel(Cellule cellule, JPanel panel) {
-        Content content = cellule.getContent();
-        if (content != null) {
-            displayByType(content, panel);
-
-        }
-    }
-
-    private void displayByType(Content content, JPanel panel) {
-        if (content instanceof Agent) {
-            panel.setBackground(Color.GREEN);
-        } else if (content instanceof Objet) {
-            panel.setBackground(Color.ORANGE);
-        }
-    }
-
-    public Environnement getEnvironnement() {
-        return environnement;
-    }
-
-    public void setEnvironnement(Environnement environnement) {
-        this.environnement = environnement;
-    }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

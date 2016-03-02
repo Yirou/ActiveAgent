@@ -7,10 +7,14 @@ package com.belogical.agentactif.model.agent;
 
 import com.belogical.agentactif.model.Cellule;
 import com.belogical.agentactif.model.Content;
+import com.belogical.agentactif.model.Empty;
 import com.belogical.agentactif.model.Environnement;
+import com.belogical.agentactif.utils.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,14 +23,15 @@ import java.util.logging.Logger;
  * @author yirou
  */
 public abstract class Agent extends Content implements Runnable {
-
-    private boolean alive;
-    private Thread thread;
-    private Cellule celluleCourant;
+    
+    protected boolean alive = true;
+    protected Thread thread;
+    protected Cellule celluleCourant;
 
     public Agent(String name) {
         super(name);
         thread = new Thread(this);
+        thread.start();
     }
 
     public Cellule getCelluleCourant() {
@@ -37,15 +42,31 @@ public abstract class Agent extends Content implements Runnable {
         this.celluleCourant = celluleCourant;
     }
 
-    public List<Cellule> checkFreeCellule(Environnement environnement) {
+    public List<Cellule> checkFreeCellule() {
+        Environnement environnement = Environnement.getInstance();
+        Lock l = new ReentrantLock();
         List<Cellule> results = new ArrayList<>();
-        List<Integer> decallage = Arrays.asList(-1, 0, 1);
-        for (int i : decallage) {
-            for (int j : decallage) {
-                if (i + this.getCelluleCourant().getX() <= environnement.getNbLine() && j + this.getCelluleCourant().getY() <= environnement.getNbColumn()) {
-                    results.add(environnement.getCellules()[this.getCelluleCourant().getX() + i][this.getCelluleCourant().getY() + j]);
+        int x, y;
+        boolean isAgent;
+        l.lock();
+        try {
+            List<Integer> decallage = Arrays.asList(-1, 0, 1);
+            for (int i : decallage) {
+                for (int j : decallage) {
+                    x = i + this.getCelluleCourant().getX();
+                    y = j + this.getCelluleCourant().getY();
+                    if ((x >= 0 && y >= 0) && (x != celluleCourant.getX() || (y != celluleCourant.getY())) && (x < environnement.getNbLine()) && (y < environnement.getNbColumn())) {
+//                        System.out.println("X " + (i + this.getCelluleCourant().getX()) + ", Y " + (this.getCelluleCourant().getY() + j));
+                        isAgent = environnement.getCellules()[x][y].getContent() instanceof Agent;
+                        if (!isAgent) {
+                            results.add(environnement.getCellules()[x][y]);
+                        }
+
+                    }
                 }
             }
+        } finally {
+            l.unlock();
         }
 
         return results;
@@ -81,9 +102,26 @@ public abstract class Agent extends Content implements Runnable {
 
     @Override
     public void run() {
+        Cellule cellule;
         while (alive) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
+                List<Cellule> nearby = checkFreeCellule();
+                if (nearby.size() > 0) {
+                    System.out.println("Mes voisins " + nearby.size() + " | " + nearby.toString());
+                    int cel = Utils.random(0, nearby.size());
+                    cellule=this.getCelluleCourant();
+                    cellule.setContent(new Empty("Empty"));
+                    cellule=nearby.get(cel);
+                    this.setCelluleCourant(cellule);
+                    double pheromone = cellule.getPheromone()+5;
+                    cellule.setPheromone(pheromone);
+                    System.out.println("pheromone " + cellule.getPheromone());
+                    System.out.println("nearby " + nearby.size() + " Now cellule " + cel + " = " + nearby.get(cel).getX() + " , " + nearby.get(cel).getY());
+                    nearby.get(cel).setContent(this);
+                    this.setChanged();
+                    this.notifyObservers();
+                }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
             }
