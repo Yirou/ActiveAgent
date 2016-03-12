@@ -114,10 +114,10 @@ public abstract class Agent extends Content implements Runnable {
                     cellule.setContent(new Empty("Empty"));
                     cellule=nearby.get(cel);
                     this.setCelluleCourant(cellule);
-                    double pheromone = cellule.getPheromone()+5;
+                    double pheromone = cellule.getPheromone()+30;
                     cellule.setPheromone(pheromone);
-                    System.out.println("pheromone " + cellule.getPheromone());
-                    System.out.println("nearby " + nearby.size() + " Now cellule " + cel + " = " + nearby.get(cel).getX() + " , " + nearby.get(cel).getY());
+//                    System.out.println("pheromone " + cellule.getPheromone());
+//                    System.out.println("nearby " + nearby.size() + " Now cellule " + cel + " = " + nearby.get(cel).getX() + " , " + nearby.get(cel).getY());
                     nearby.get(cel).setContent(this);
                     this.setChanged();
                     this.notifyObservers();

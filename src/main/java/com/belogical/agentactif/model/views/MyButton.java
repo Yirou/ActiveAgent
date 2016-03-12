@@ -65,14 +65,14 @@ public class MyButton extends JButton implements Observer {
     public void update(Observable o, Object arg) {
         Agent agent;
         if (o instanceof Agent) {
-            System.out.println("changed " + this.getIcon());
+//            System.out.println("changed " + this.getIcon());
             this.removeAll();
             this.setIcon(null);
             calculBtnColor(this);
             agent = (Agent) o;
             MyButton btn = EnvironnementView.getInstance().getButtons().get((agent.getCelluleCourant().getX() * Environnement.getInstance().getNbColumn()) + agent.getCelluleCourant().getY());
             btn.setCellule(agent.getCelluleCourant());
-            System.out.println("Panel " + (agent.getCelluleCourant().getX() + agent.getCelluleCourant().getY()));
+//            System.out.println("Panel " + (agent.getCelluleCourant().getX() + agent.getCelluleCourant().getY()));
             agent.deleteObservers();
             agent.addObserver(btn);
             displayByType(agent, btn);
